@@ -41,4 +41,35 @@ class UserController extends Controller
             'users' => UserResource::collection($paginationResult['users']),
         ]);
     }
+
+    public function show($id): JsonResponse
+    {
+        $validator = Validator::make(['user_id' => $id], [
+            'user_id' => 'integer|min:1',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'fails' => $validator->errors(),
+            ], 400);
+        }
+
+        $user = User::with('position')->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The user with the requested identifier does not exist',
+                'fails' => [
+                    'user_id' => ['User not found']
+                ],
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'user' => UserResource::make($user)
+        ]);
+    }
 }
