@@ -35,7 +35,7 @@ class UserController extends Controller
                 'fails' => $validator->errors()
             ], 422);
         }
-        $count = $request->query('count', 5);
+        $count = $request->query('count', 6);
         $page = $request->query('page', 1);
         $offset = $request->query('offset');
 

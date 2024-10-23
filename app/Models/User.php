@@ -67,7 +67,7 @@ class User extends Authenticatable
         return null;
     }
 
-    public static function customPaginate($count = 5, $page = 1, $offset = null): array
+    public static function customPaginate($count = 6, $page = 1, $offset = null): array
     {
         $query = self::with('position')
             ->orderBy('created_at', 'desc');
