@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->renderable(function (NotFoundHttpException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
+                    'success' => false,
                     'message' => 'API endpoint not found'
                 ], 404);
             }
@@ -36,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->renderable(function (MethodNotAllowedHttpException $e, $request) {
             if ($request->is('api/*')) {
                 return response()->json([
+                    'success' => false,
                     'message' => 'Method not allowed'
                 ], 405);
             }
