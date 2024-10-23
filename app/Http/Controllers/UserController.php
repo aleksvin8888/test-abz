@@ -2,14 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+
+    protected UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     public function index(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -71,5 +81,33 @@ class UserController extends Controller
             'success' => true,
             'user' => UserResource::make($user)
         ]);
+    }
+
+    public function create(CreateUserRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $existingUser = User::where('email', $data['email'])
+            ->orWhere('phone', $data['phone'])
+            ->first();
+
+        if ($existingUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User with this phone or email already exist'
+            ], 409);
+        }
+
+        $user = $this->userService->create($data);
+
+        if ($user) {
+            return response()->json([
+                'success' => true,
+                'user_id' => $user->id,
+                'message' => 'New user successfully registered'
+            ]);
+        } else {
+            return response()->json(['message' => 'Server Error'], 500);
+        }
     }
 }

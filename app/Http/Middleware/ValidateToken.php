@@ -19,7 +19,10 @@ class ValidateToken
         $token = $request->header('Token');
 
         if (!$token || !$this->isValidToken($token)) {
-            return response()->json(['error' => 'Invalid or expired token'], 403);
+            return response()->json([
+                'success' => false,
+                'error' => 'The token expired.'
+            ], 401);
         }
 
         return $next($request);

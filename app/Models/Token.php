@@ -8,7 +8,12 @@ class Token extends Model
 {
     protected $fillable = ['token', 'is_used', 'expires_at'];
 
-    public function isExpired() {
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
+
+    public function isExpired(): bool
+    {
         return $this->expires_at->isPast();
     }
 }
